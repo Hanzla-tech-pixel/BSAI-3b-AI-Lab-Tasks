@@ -1,0 +1,217 @@
+BFS
+step | popped path | result | queue after the step
+1 | A | processed | [A-B, A-C]
+2 | A-B | processed | [A-C, A-B-D, A-B-E]
+3 | A-C | processed | [A-B-D, A-B-E, A-C-F]
+4 | A-B-D | processed | [A-B-E, A-C-F]
+5 | A-B-E | processed | [A-C-F, A-B-E-F]
+6 | A-C-F | processed | [A-B-E-F, A-C-F-G]
+7 | A-B-E-F | skipped (already visited) | [A-C-F-G]
+8 | A-C-F-G | GOAL | []
+Final path : A-C-F-G
+Visit order: A, B, C, D, E, F, G
+Matches manual trace: True
+
+DFS
+step | popped path | result | stack (top is on the right) after the step
+1 | A | processed | [A-C, A-B]
+2 | A-B | processed | [A-C, A-B-E, A-B-D]
+3 | A-B-D | processed | [A-C, A-B-E]
+4 | A-B-E | processed | [A-C, A-B-E-F]
+5 | A-B-E-F | processed | [A-C, A-B-E-F-G, A-B-E-F-C]
+6 | A-B-E-F-C | processed | [A-C, A-B-E-F-G]
+7 | A-B-E-F-G | GOAL | [A-C]
+Final path : A-B-E-F-G
+Visit order: A, B, D, E, F, C, G
+Matches manual trace: True
+
+DLS on goal G
+limit 1 | status CUTOFF | path none | nodes visited 3
+limit 2 | status CUTOFF | path none | nodes visited 6
+limit 3 | status FOUND | path A-C-F-G | nodes visited 9
+limit 4 | status FOUND | path A-B-E-F-G | nodes visited 7
+
+IDDFS on goal G
+max depth 1 | status CUTOFF | path none | limits attempted [1] | nodes per limit [3] | total nodes 3
+max depth 2 | status CUTOFF | path none | limits attempted [1, 2] | nodes per limit [3, 6] | total nodes 9
+max depth 3 | status FOUND | path A-C-F-G | limits attempted [1, 2, 3] | nodes per limit [3, 6, 9] | total nodes 18
+max depth 4 | status FOUND | path A-C-F-G | limits attempted [1, 2, 3] | nodes per limit [3, 6, 9] | total nodes 18
+
+Edge case: goal H is not connected to the graph
+DLS limit 4 | status CUTOFF
+DLS limit 5 | status CUTOFF
+DLS limit 6 | status FAILURE
+IDDFS max depth 7 | status FAILURE | limits attempted [1, 2, 3, 4, 5, 6]
+Weighted edges:
+   A - B = 2
+   A - C = 5
+   B - D = 4
+   B - E = 2
+   C - F = 6
+   E - F = 3
+   F - G = 2
+
+UCS trace (cost:path)
+1 | popped 0:A | processed | frontier after [2:A-B, 5:A-C]
+2 | popped 2:A-B | processed | frontier after [4:A-B-E, 5:A-C, 6:A-B-D]
+3 | popped 4:A-B-E | processed | frontier after [5:A-C, 6:A-B-D, 7:A-B-E-F]
+4 | popped 5:A-C | processed | frontier after [6:A-B-D, 7:A-B-E-F, 11:A-C-F]
+5 | popped 6:A-B-D | processed | frontier after [7:A-B-E-F, 11:A-C-F]
+6 | popped 7:A-B-E-F | processed | frontier after [9:A-B-E-F-G, 11:A-C-F]
+7 | popped 9:A-B-E-F-G | GOAL | frontier after [11:A-C-F]
+UCS path        : A-B-E-F-G | hops 4
+UCS cost (search): 9
+UCS cost (re-added): 2 + 2 + 3 + 2 = 9
+Processing order: A, B, E, C, D, F, G
+
+BFS path on the same topology: A-C-F-G | hops 3
+BFS path cost: 5 + 6 + 2 = 13
+UCS cost 9 <= BFS cost 13 : True
+PS C:\Users\Administrator\Desktop\python> & 'C:\Users\Administrator\AppData\Local\Python\pythoncore-3.14-64\python.exe' '"c:/Users/Administrator/Desktop/python/labtask 4.py"'
+Task 1 and 2: A* with the supplied heuristic
+h = {'S': 5, 'A': 4, 'B': 4, 'C': 2, 'G': 0}
+
+=== A* (supplied heuristic) ===
+step 1 | pop S | g = 0 | h = 5 | f = 0 + 5 = 5 | expanded
+        frontier after: [S-A (1+4=5), S-B (4+4=8)]
+step 2 | pop A | g = 1 | h = 4 | f = 1 + 4 = 5 | expanded
+        frontier after: [S-A-C (3+2=5), S-B (4+4=8)]
+step 3 | pop C | g = 3 | h = 2 | f = 3 + 2 = 5 | expanded
+        frontier after: [S-A-C-G (6+0=6), S-B (4+4=8)]
+step 4 | pop G | g = 6 | h = 0 | f = 6 + 0 = 6 | GOAL
+        frontier after: [S-B (4+4=8)]
+Returned path        : S-A-C-G
+Cost from search     : 6
+Cost summed separately: 1 + 2 + 3 = 6
+Processing order     : S, A, C, G
+Expansions (goal counted): 4 | (goal not counted): 3
+Stale entries popped : 0
+Entries left in frontier at the end: [S-B (4+4=8)]
+
+=== UCS control (h = 0) ===
+step 1 | pop S | g = 0 | h = 0 | f = 0 + 0 = 0 | expanded
+        frontier after: [S-A (1+0=1), S-B (4+0=4)]
+step 2 | pop A | g = 1 | h = 0 | f = 1 + 0 = 1 | expanded
+        frontier after: [S-A-C (3+0=3), S-B (4+0=4)]
+step 3 | pop C | g = 3 | h = 0 | f = 3 + 0 = 3 | expanded
+        frontier after: [S-B (4+0=4), S-A-C-G (6+0=6)]
+step 4 | pop B | g = 4 | h = 0 | f = 4 + 0 = 4 | expanded
+        frontier after: [S-A-C-G (6+0=6), S-B-G (9+0=9)]
+step 5 | pop G | g = 6 | h = 0 | f = 6 + 0 = 6 | GOAL
+        frontier after: [S-B-G (9+0=9)]
+Returned path        : S-A-C-G
+Cost from search     : 6
+Cost summed separately: 1 + 2 + 3 = 6
+Processing order     : S, A, C, B, G
+Expansions (goal counted): 5 | (goal not counted): 4
+Stale entries popped : 0
+Entries left in frontier at the end: [S-B-G (9+0=9)]
+
+Summary: A* expanded ['S', 'A', 'C', 'G'] UCS expanded ['S', 'A', 'C', 'B', 'G'] | same cost: True
+True remaining cost from C to G: 3 via C-G
+Original h(C) = 2 (underestimates by 1 )
+Modified h(C) = 10 (overestimates by 7 )
+
+=== Original heuristic ===
+step 1 | pop S | f = 0 + 5 = 5 | expanded | frontier after: [S-A (1+4=5), S-B (4+4=8)]
+step 2 | pop A | f = 1 + 4 = 5 | expanded | frontier after: [S-A-C (3+2=5), S-B (4+4=8)]
+step 3 | pop C | f = 3 + 2 = 5 | expanded | frontier after: [S-A-C-G (6+0=6), S-B (4+4=8)]
+step 4 | pop G | f = 6 + 0 = 6 | GOAL | frontier after: [S-B (4+4=8)]
+Path : S-A-C-G
+Cost : 1 + 2 + 3 = 6
+Processing order: S, A, C, G | expansions (goal counted): 4
+
+=== Modified heuristic h(C)=10 ===
+step 1 | pop S | f = 0 + 5 = 5 | expanded | frontier after: [S-A (1+4=5), S-B (4+4=8)]
+step 2 | pop A | f = 1 + 4 = 5 | expanded | frontier after: [S-B (4+4=8), S-A-C (3+10=13)]
+step 3 | pop B | f = 4 + 4 = 8 | expanded | frontier after: [S-B-G (9+0=9), S-A-C (3+10=13)]
+step 4 | pop G | f = 9 + 0 = 9 | GOAL | frontier after: [S-A-C (3+10=13)]
+Path : S-B-G
+Cost : 4 + 5 = 9
+Processing order: S, A, B, G | expansions (goal counted): 4
+
+Extra check: only h(C) is changed each time
+h(C) | path | cost | processing order
+2 | S-A-C-G | 6 | S, A, C, G
+3 | S-A-C-G | 6 | S, A, C, G
+4 | S-A-C-G | 6 | S, A, C, G
+5 | S-A-C-G | 6 | S, A, B, C, G
+6 | S-A-C-G | 6 | S, A, B, C, G
+7 | S-B-G | 9 | S, A, B, G
+8 | S-B-G | 9 | S, A, B, G
+9 | S-B-G | 9 | S, A, B, G
+10 | S-B-G | 9 | S, A, B, G
+PS C:\Users\Administrator\Desktop\python> & 'C:\Users\Administrator\AppData\Local\Python\pythoncore-3.14-64\python.exe' '"c:/Users/Administrator/Desktop/python/labtask 4.py"'
+Task 1 and 2: A* with the supplied heuristic
+h = {'S': 5, 'A': 4, 'B': 4, 'C': 2, 'G': 0}
+
+=== A* (supplied heuristic) ===
+step 1 | pop S | g = 0 | h = 5 | f = 0 + 5 = 5 | expanded
+        frontier after: [S-A (1+4=5), S-B (4+4=8)]
+step 2 | pop A | g = 1 | h = 4 | f = 1 + 4 = 5 | expanded
+        frontier after: [S-A-C (3+2=5), S-B (4+4=8)]
+step 3 | pop C | g = 3 | h = 2 | f = 3 + 2 = 5 | expanded
+        frontier after: [S-A-C-G (6+0=6), S-B (4+4=8)]
+step 4 | pop G | g = 6 | h = 0 | f = 6 + 0 = 6 | GOAL
+        frontier after: [S-B (4+4=8)]
+Returned path        : S-A-C-G
+Cost from search     : 6
+Cost summed separately: 1 + 2 + 3 = 6
+Processing order     : S, A, C, G
+Expansions (goal counted): 4 | (goal not counted): 3
+Stale entries popped : 0
+Entries left in frontier at the end: [S-B (4+4=8)]
+
+=== UCS control (h = 0) ===
+step 1 | pop S | g = 0 | h = 0 | f = 0 + 0 = 0 | expanded
+        frontier after: [S-A (1+0=1), S-B (4+0=4)]
+step 2 | pop A | g = 1 | h = 0 | f = 1 + 0 = 1 | expanded
+        frontier after: [S-A-C (3+0=3), S-B (4+0=4)]
+step 3 | pop C | g = 3 | h = 0 | f = 3 + 0 = 3 | expanded
+        frontier after: [S-B (4+0=4), S-A-C-G (6+0=6)]
+step 4 | pop B | g = 4 | h = 0 | f = 4 + 0 = 4 | expanded
+        frontier after: [S-A-C-G (6+0=6), S-B-G (9+0=9)]
+step 5 | pop G | g = 6 | h = 0 | f = 6 + 0 = 6 | GOAL
+        frontier after: [S-B-G (9+0=9)]
+Returned path        : S-A-C-G
+Cost from search     : 6
+Cost summed separately: 1 + 2 + 3 = 6
+Processing order     : S, A, C, B, G
+Expansions (goal counted): 5 | (goal not counted): 4
+Stale entries popped : 0
+Entries left in frontier at the end: [S-B-G (9+0=9)]
+
+Summary: A* expanded ['S', 'A', 'C', 'G'] UCS expanded ['S', 'A', 'C', 'B', 'G'] | same cost: True
+True remaining cost from C to G: 3 via C-G
+Original h(C) = 2 (underestimates by 1 )
+Modified h(C) = 10 (overestimates by 7 )
+
+=== Original heuristic ===
+step 1 | pop S | f = 0 + 5 = 5 | expanded | frontier after: [S-A (1+4=5), S-B (4+4=8)]
+step 2 | pop A | f = 1 + 4 = 5 | expanded | frontier after: [S-A-C (3+2=5), S-B (4+4=8)]
+step 3 | pop C | f = 3 + 2 = 5 | expanded | frontier after: [S-A-C-G (6+0=6), S-B (4+4=8)]
+step 4 | pop G | f = 6 + 0 = 6 | GOAL | frontier after: [S-B (4+4=8)]
+Path : S-A-C-G
+Cost : 1 + 2 + 3 = 6
+Processing order: S, A, C, G | expansions (goal counted): 4
+
+=== Modified heuristic h(C)=10 ===
+step 1 | pop S | f = 0 + 5 = 5 | expanded | frontier after: [S-A (1+4=5), S-B (4+4=8)]
+step 2 | pop A | f = 1 + 4 = 5 | expanded | frontier after: [S-B (4+4=8), S-A-C (3+10=13)]
+step 3 | pop B | f = 4 + 4 = 8 | expanded | frontier after: [S-B-G (9+0=9), S-A-C (3+10=13)]
+step 4 | pop G | f = 9 + 0 = 9 | GOAL | frontier after: [S-A-C (3+10=13)]
+Path : S-B-G
+Cost : 4 + 5 = 9
+Processing order: S, A, B, G | expansions (goal counted): 4
+
+Extra check: only h(C) is changed each time
+h(C) | path | cost | processing order
+2 | S-A-C-G | 6 | S, A, C, G
+3 | S-A-C-G | 6 | S, A, C, G
+4 | S-A-C-G | 6 | S, A, C, G
+5 | S-A-C-G | 6 | S, A, B, C, G
+6 | S-A-C-G | 6 | S, A, B, C, G
+7 | S-B-G | 9 | S, A, B, G
+8 | S-B-G | 9 | S, A, B, G
+9 | S-B-G | 9 | S, A, B, G
+10 | S-B-G | 9 | S, A, B, G
