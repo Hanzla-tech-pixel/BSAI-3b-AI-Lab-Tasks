@@ -1,0 +1,69 @@
+BFS
+step | popped path | result | queue after the step
+1 | A | processed | [A-B, A-C]
+2 | A-B | processed | [A-C, A-B-D, A-B-E]
+3 | A-C | processed | [A-B-D, A-B-E, A-C-F]
+4 | A-B-D | processed | [A-B-E, A-C-F]
+5 | A-B-E | processed | [A-C-F, A-B-E-F]
+6 | A-C-F | processed | [A-B-E-F, A-C-F-G]
+7 | A-B-E-F | skipped (already visited) | [A-C-F-G]
+8 | A-C-F-G | GOAL | []
+Final path : A-C-F-G
+Visit order: A, B, C, D, E, F, G
+Matches manual trace: True
+
+DFS
+step | popped path | result | stack (top is on the right) after the step
+1 | A | processed | [A-C, A-B]
+2 | A-B | processed | [A-C, A-B-E, A-B-D]
+3 | A-B-D | processed | [A-C, A-B-E]
+4 | A-B-E | processed | [A-C, A-B-E-F]
+5 | A-B-E-F | processed | [A-C, A-B-E-F-G, A-B-E-F-C]
+6 | A-B-E-F-C | processed | [A-C, A-B-E-F-G]
+7 | A-B-E-F-G | GOAL | [A-C]
+Final path : A-B-E-F-G
+Visit order: A, B, D, E, F, C, G
+Matches manual trace: True
+
+DLS on goal G
+limit 1 | status CUTOFF | path none | nodes visited 3
+limit 2 | status CUTOFF | path none | nodes visited 6
+limit 3 | status FOUND | path A-C-F-G | nodes visited 9
+limit 4 | status FOUND | path A-B-E-F-G | nodes visited 7
+
+IDDFS on goal G
+max depth 1 | status CUTOFF | path none | limits attempted [1] | nodes per limit [3] | total nodes 3
+max depth 2 | status CUTOFF | path none | limits attempted [1, 2] | nodes per limit [3, 6] | total nodes 9
+max depth 3 | status FOUND | path A-C-F-G | limits attempted [1, 2, 3] | nodes per limit [3, 6, 9] | total nodes 18
+max depth 4 | status FOUND | path A-C-F-G | limits attempted [1, 2, 3] | nodes per limit [3, 6, 9] | total nodes 18
+
+Edge case: goal H is not connected to the graph
+DLS limit 4 | status CUTOFF
+DLS limit 5 | status CUTOFF
+DLS limit 6 | status FAILURE
+IDDFS max depth 7 | status FAILURE | limits attempted [1, 2, 3, 4, 5, 6]
+Weighted edges:
+   A - B = 2
+   A - C = 5
+   B - D = 4
+   B - E = 2
+   C - F = 6
+   E - F = 3
+   F - G = 2
+
+UCS trace (cost:path)
+1 | popped 0:A | processed | frontier after [2:A-B, 5:A-C]
+2 | popped 2:A-B | processed | frontier after [4:A-B-E, 5:A-C, 6:A-B-D]
+3 | popped 4:A-B-E | processed | frontier after [5:A-C, 6:A-B-D, 7:A-B-E-F]
+4 | popped 5:A-C | processed | frontier after [6:A-B-D, 7:A-B-E-F, 11:A-C-F]
+5 | popped 6:A-B-D | processed | frontier after [7:A-B-E-F, 11:A-C-F]
+6 | popped 7:A-B-E-F | processed | frontier after [9:A-B-E-F-G, 11:A-C-F]
+7 | popped 9:A-B-E-F-G | GOAL | frontier after [11:A-C-F]
+UCS path        : A-B-E-F-G | hops 4
+UCS cost (search): 9
+UCS cost (re-added): 2 + 2 + 3 + 2 = 9
+Processing order: A, B, E, C, D, F, G
+
+BFS path on the same topology: A-C-F-G | hops 3
+BFS path cost: 5 + 6 + 2 = 13
+UCS cost 9 <= BFS cost 13 : True
