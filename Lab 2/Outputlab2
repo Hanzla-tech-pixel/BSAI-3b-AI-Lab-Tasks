@@ -1,0 +1,11 @@
+1 (22, True) Mode: IDLE SEND
+2 (22, True) Mode: IDLE NO-SEND
+3 (22, True) Mode: IDLE NO-SEND
+4 (20, True) Mode: IDLE NO-SEND
+5 (26, True) Mode: IDLE NO-SEND
+6 (19.9, True) Mode: HEAT SEND
+7 (19.9, True) Mode: HEAT NO-SEND
+8 (26.1, True) Mode: COOL SEND
+9 (24, False) Mode: ECO SEND
+10 (15, False) Mode: ECO NO-SEND
+11 (24, True) Mode: IDLE SEND
