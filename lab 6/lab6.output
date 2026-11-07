@@ -1,0 +1,82 @@
+TASK 1: TOKENIZATION
+============================================================
+
+Original: 'AI, search!'
+Whitespace tokens: ['AI,', 'search!'] 2
+Word-like tokens: ['AI', 'search'] 2
+
+Original: "I can't log in."
+Whitespace tokens: ['I', "can't", 'log', 'in.'] 4
+Word-like tokens: ['I', 'can', 't', 'log', 'in'] 5
+
+Original: 'help@example.com'
+Whitespace tokens: ['help@example.com'] 1
+Word-like tokens: ['help', 'example', 'com'] 3
+
+Original: 'CS4944 version 2.1'
+Whitespace tokens: ['CS4944', 'version', '2.1'] 3
+Word-like tokens: ['CS4944', 'version', '2', '1'] 4
+
+Original: ''
+Whitespace tokens: [] 0
+Word-like tokens: [] 0
+
+Original: 'یہ ایک ٹیسٹ مثال ہے'
+Whitespace tokens: ['یہ', 'ایک', 'ٹیسٹ', 'مثال', 'ہے'] 5
+Word-like tokens: ['یہ', 'ایک', 'ٹیسٹ', 'مثال', 'ہے'] 5
+
+FAQ CHATBOT TEST
+
+User: How do I reset my password?
+Bot: Use the recovery link on the login page. [Source: it_help.txt]
+
+User: password recovery
+Bot: Possible matching questions:
+How do I reset my password? (Similarity: 0.426)
+How long can I borrow a library book? (Similarity: 0.0)
+How can I connect to campus Wi-Fi? (Similarity: 0.0)
+
+User: 
+Bot: Please enter a question.
+
+User: volcano geology
+Bot: No matching FAQ found. Contact the help desk.
+
+Tokenization can divide the same text differently.
+For example, regex separates 'can't' into 'can' and 't'.
+Removing punctuation may also change the meaning of text.
+A similarity score is not proof that an answer is correct.
+PS C:\Users\Administrator\Desktop\python>
+TASK 2: TEXT CHUNKING
+============================================================
+
+Strategy: 0
+Total chunks: 25
+Average words: 35.24
+Minimum words: 6
+Maximum words: 40
+late_0_0 Characters: 0 - 269
+late_0_1 Characters: 270 - 552
+late_0_2 Characters: 553 - 798
+
+Strategy: 10
+Total chunks: 31
+Average words: 36.81
+Minimum words: 13
+Maximum words: 40
+late_10_0 Characters: 0 - 269
+late_10_1 Characters: 196 - 479
+late_10_2 Characters: 412 - 676
+
+Strategy: sentence
+Total chunks: 28
+Average words: 31.46
+Minimum words: 10
+Maximum words: 40
+late_sentence_0 Characters: 0 - 208
+late_sentence_1 Characters: 208 - 468
+late_sentence_2 Characters: 468 - 715
+
+Invalid overlap test passed.
+Empty, short, invalid overlap and long sentence tests passed.
+PS C:\Users\Administrator\Desktop\python>
